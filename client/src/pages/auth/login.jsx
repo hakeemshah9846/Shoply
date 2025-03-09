@@ -1,29 +1,55 @@
 import CommonForm from "@/components/common/form";
 import { Link } from "react-router-dom";
 import {loginFormControls} from "@/config";
+import { loginUser } from "@/store/auth-slice";
+import {useToast} from "@/components/ui/use-toast";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+
+const initialState = {
+    email : "",
+    password : "",
+}
 
 function AuthLogin() {
-  console.log("Rendering AuthLogin Component...");
+  const [formData, setFormData] = useState(initialState);
+  const dispatch = useDispatch();
+
+  function onSubmit(event) {
+    event.preventDefault();
+
+    dispatch(loginUser(formData).then((data) => {
+        if(data?.payload?.success) {
+            //toast
+        }
+    }))
+
+    
+  }
 
   return (
-    <>
-      <div className="flex flex-col items-center justify-center">
+    <div className="mx-auto w-full max-w-md space-y-6">
+      <div className="text-center">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Sign in to your account
         </h1>
-        <span className="mt-2">
-          Don't have an account{" "}
+        <p className="mt-2">
+          Don't have an account
           <Link
-            to={"/auth/register"}
             className="font-medium ml-2 text-primary hover:underline"
+            to="/auth/register"
           >
             Register
           </Link>
-        </span>
-
-        <CommonForm formControls={loginFormControls} />
+        </p>
       </div>
-    </>
+      <CommonForm
+        formControls={loginFormControls}
+        formData={formData}
+        setFormData={setFormData}
+        onSubmit={onSubmit}
+      />
+    </div>
   );
 }
 
